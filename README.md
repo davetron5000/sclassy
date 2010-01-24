@@ -39,6 +39,8 @@ The SClassy syntax is very similar:
       d.download("company.png")
     }
 
+When you run this, it will generate the diagram and download it to <code>company.png</code>:
+
     sbt run && open company.png
 
 Shows you
