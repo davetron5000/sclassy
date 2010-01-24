@@ -45,7 +45,10 @@ sealed abstract class Relation(source:C,destination:C,connector:String) {
   override def toString = {
     source.toString + source.label.getOrElse("") + (source.card match {
       case None => ""
-      case Some(i) => "+" + i
+      case Some(i) => source.constructor match {
+        case Some(Composition) => "++" + i
+        case _ => "+" + i
+      }
     }) + (destination.card match {
       case None => ""
       case Some(i) => source.card match {
@@ -63,7 +66,7 @@ case class Composition(owner:C,ownee:C) extends Relation(owner,ownee,"++-")
 case class Inheritance(sub:C,sup:C) extends Relation(sub,sup,"^")
 case class Dependencies(name:String, user:C,usee:C) extends Relation(user,usee,name + "-.->")
 
-class C(val name:String,val card:Option[String], val label:Option[String]) {
+class C(val name:String,val card:Option[String], val label:Option[String], val constructor:Option[Function2[C,C,Relation]]) {
 
   case class CWithDestCard(me:C,destCard:String) {
     def >(c:C) = Directional(me,C(c.name,destCard))
@@ -75,6 +78,7 @@ class C(val name:String,val card:Option[String], val label:Option[String]) {
   def apply(newLabel:String) = C(name,card,newLabel)
   def ->(c:C) = Directional(this,c)
   def -*>(c:C) = Directional(this,C(c.name,"*"))
+  def -*(c:C) = UnspecifiedRelation(this,C(c.name,"*"))
   def <->(c:C) = Bidirectional(this,c)
   def +- (c:C) = Aggregation(this,c)
   def <>-(c:C) = +-(c)
@@ -84,8 +88,8 @@ class C(val name:String,val card:Option[String], val label:Option[String]) {
   def ^(c:C) = Inheritance(this,c)
   def -->(depName:String,c:C) = Dependencies(depName,this,c)
   def -(c:C) = UnspecifiedRelation(this,c)
-
-  def +(num:String) = C(name,num)
+  def ++(num:String) = new C(name,Some(num),label,Some(Composition))
+  def +(num:String) = new C(name,Some(num),label,Some(Aggregation))
   def -(destCard:String) = CWithDestCard(this,destCard)
 
   override def toString = "[" + name + "]"
@@ -93,8 +97,8 @@ class C(val name:String,val card:Option[String], val label:Option[String]) {
 
 /** Factory for class descriptions */
 object C {
-  def apply(name:String) = new C(name,None,None)
-  def apply(name:String,card:String) = new C(name,Some(card),None)
-  def apply(name:String,card:String,label:String) = new C(name,Some(card),Some(label))
-  def apply(name:String,card:Option[String],label:String) = new C(name,card,Some(label))
+  def apply(name:String) = new C(name,None,None,None)
+  def apply(name:String,card:String) = new C(name,Some(card),None,None)
+  def apply(name:String,card:String,label:String) = new C(name,Some(card),Some(label),None)
+  def apply(name:String,card:Option[String],label:String) = new C(name,card,Some(label),None)
 }
