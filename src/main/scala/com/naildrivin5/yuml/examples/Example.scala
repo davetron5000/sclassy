@@ -12,5 +12,6 @@ object Main extends Application {
   d += C("Person")++"1"-*C("Address")
   d += C("Manager")("boss")+-C("Employee")
   println(d.toString)
+  println(d.toURL.toString)
   d.download("company.png")
 }

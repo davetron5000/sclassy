@@ -39,6 +39,12 @@ The SClassy syntax is very similar:
       d.download("company.png")
     }
 
+    sbt run && open company.png
+
+Shows you
+
+<img src="http://yuml.me/diagram/scruffy/class/%5BManager%5Dboss%2B-%5BEmployee%5D%2C%20%5BPerson%5D%2B%2B1-*-%5BAddress%5D%2C%20%5BPerson%5D%5E%5BEmployee%5D%2C%20%5BPerson%5D%5E%5BManager%5D%2C%20%5BCompany%5D%2B-%5BEmployee%5D%2C%20%5BCompany%5D%2B-%5BManager%5D">
+
 ## Not Handled
 
  * Some of the ways yuml lets you specify relations were hard to do, so things like <code>[Foo]1<->2[Bar]</code> won't work.
