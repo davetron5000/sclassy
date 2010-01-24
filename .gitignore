@@ -1,0 +1,5 @@
+.*.sw?
+project/boot
+lib
+target
+
